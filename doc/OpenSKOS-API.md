@@ -5,6 +5,7 @@
 - [ ] SPARQL paging experiments
   - use LIMIT and OFFSET
   - use a last seen concept
+  - can we use the [hydra paging (`hydra:PartialCollectionView`)](http://www.hydra-cg.com/spec/latest/core/#collections) (envisioned part of the NDE generic API)
 - [ ] how to handle URIs, e.g., register prefix in `application.ini`
   - user specified relation types
   - user provided properties
@@ -222,6 +223,8 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 
 ## relations
 
+`.../relations?<selection params>&<projection params>&<limit params>`
+
 `<selection params>`
 * subject=`uri`
 * types=`comma separated list of relation types`
@@ -258,8 +261,6 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 `<limit params>`
 * limit=`nr of subjects to return`
 * last=`last seen subject`
-
-`.../relations?<selection params><projection params><limit params>`
 
 ## relation types (??)
 
