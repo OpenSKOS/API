@@ -1,0 +1,394 @@
+#%RAML 1.0
+title: "OpenSKOS"
+description: "OpenSKOS API v2"
+version: "2.0.0"
+protocols:
+- "HTTP"
+baseUri: "http://openskos.org"
+mediaType:
+- "application/xml"
+- "application/json"
+types:
+  skos:uri:
+    type: "string"
+    description: "Identifier for a concept"
+  skos:note:
+    type: "string"
+  skos:label:
+    type: "string"
+    description: "String that can contain a language suffix.\nDefined via http://www.w3.org/2002/07/owl#AnnotationProperty"
+  skos:notation:
+    type: "string"
+  skos:topConceptOf:
+    type: "string"
+  orderValues:
+    type: "string"
+    examples:
+      example: "prefLabel@en:asc"
+      example1: "score:desc"
+      example2: "notation:asc"
+      example3: "uri:desc"
+  propsValues:
+    type: "string"
+    examples:
+      example: "uri"
+      example1: "label"
+      example2: "label@en"
+      example3: "prefLabel"
+      example4: "note@en"
+      example5: "editorialNote"
+      example6: "notation"
+      example7: "semanticRelation"
+      example8: "broader"
+      example9: "mappingRelation"
+      example10: "broadMatch"
+      example11: "inScheme"
+      example12: "topConceptOf"
+      example13: "openskos:inCollection"
+      example14: "openskos:status"
+      example15: "openskos:set"
+      example16: "openskos:institution"
+  Concept:
+    type: "object"
+    properties:
+      skos:notation:
+        type: "string"
+        required: false
+      skos:prefLabel:
+        type: "skos:label"
+        examples:
+          example: "\"church\""
+          example1: "\"church\"@en"
+          example2: "\"kerk\"@nl"
+      skos:altLabel:
+        type: "skos:label"
+        required: false
+      skos:hiddenLabel:
+        type: "skos:label"
+        required: false
+      skos:note:
+        type: "skos:note"
+        required: false
+      skos:changeNote:
+        type: "skos:note"
+        required: false
+      skos:definition:
+        type: "skos:note"
+        required: false
+      skos:editorialNote:
+        type: "skos:note"
+        required: false
+      skos:example:
+        type: "skos:note"
+        required: false
+      skos:historyNote:
+        type: "skos:note"
+        required: false
+      skos:scopeNote:
+        type: "skos:note"
+        required: false
+      skos:topConceptOf:
+        type: "skos:topConceptOf"
+        required: false
+  Set:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        required: false
+      uri:
+        type: "string"
+        required: false
+      code:
+        type: "string"
+        required: false
+      tenant:
+        type: "string"
+        required: false
+      dc_title:
+        type: "string"
+        required: false
+      dc_description:
+        type: "string"
+        required: false
+      website:
+        type: "string"
+        required: false
+      license_name:
+        type: "string"
+        required: false
+      license_url:
+        type: "string"
+        required: false
+      OAI_baseURL:
+        type: "string"
+        required: false
+      allow_oai:
+        type: "boolean"
+        required: false
+      conceptsBaseUrl:
+        type: "string"
+        required: false
+    example:
+      value: "{\n\"id\": \"4\",\n\"uri\": \"http://data.beeldengeluid.nl/gtaa\",\n\
+        \"code\": \"gtaa\",\n\"tenant\": \"beng\",\n\"dc_title\": \"Gemeenschappelijke\
+        \ Thesaurus Audiovisuele Archieven\",\n\"dc_description\": \"De GTAA wordt\
+        \ gebruikt voor de beschrijving van audiovisuele collecties.\",\n\"website\"\
+        : \"http://www.den.nl/terminologiebron/262/Gemeenschappelijke-Thesaurus-Audiovisuele-Archieven\"\
+        ,\n\"license_name\": \"Open Database License (ODbL) v1.0\",\n\"license_url\"\
+        : \"http://opendatacommons.org/licenses/odbl/1.0/\",\n\"OAI_baseURL\": \"\
+        http://openskos.org/oai-pmh/?set=4\",\n\"allow_oai\": 0,\n\"conceptsBaseUrl\"\
+        : \"http://data.beeldengeluid.nl/gtaa\"\n}"
+      strict: false
+  Institution:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        required: false
+      name:
+        type: "string"
+        required: false
+      organisationUnit:
+        type: "string"
+        required: false
+      website:
+        type: "string"
+        required: false
+      email:
+        type: "string"
+        required: false
+      streetAddress:
+        type: "string"
+        required: false
+      locality:
+        type: "string"
+        required: false
+      postalCode:
+        type: "string"
+        required: false
+      countryName:
+        type: "string"
+        required: false
+      disableSearchInOtherTenants:
+        type: "boolean"
+        required: false
+      enableStatusesSystem:
+        type: "boolean"
+        required: false
+      enableSkosXl:
+        type: "boolean"
+        required: false
+    example:
+      value: "{\n\"code\": \"beng\",\n\"name\": \"Nederlands Instituut voor Beeld\
+        \ en Geluid\",\n\"organisationUnit\": \"Afdeling Metadatabeheer\",\n\"website\"\
+        : \"http://www.beeldengeluid.nl\",\n\"email\": \"klantenservice@beeldengeluid.nl\"\
+        ,\n\"streetAddress\": \"Media Park, Sumatralaan 45\",\n\"locality\": \"Hilversum\"\
+        ,\n\"postalCode\": \"1851RW\",\n\"countryName\": \"Nederland\",\n\"disableSearchInOtherTenants\"\
+        : null,\n\"enableStatusesSystem\": 1,\n\"enableSkosXl\": 1\n}"
+      strict: false
+securitySchemes:
+  API:
+    type: "x-custom"
+    describedBy:
+      headers:
+        API_KEY:
+          type: "string"
+/concepts:
+  get:
+    displayName: "Return concepts"
+    description: "Return the concepts stored in OpenSKOS. Can be used with filters."
+    queryParameters:
+      order:
+        type: "array"
+        description: "How the data will be sorted"
+        uniqueItems: true
+        minItems: 1
+        required: false
+        items:
+          type: "orderValues"
+        example:
+          value: "score:desc"
+          strict: false
+      institution:
+        type: "string"
+        description: "Name or uri of the institution to restrict results to"
+        required: false
+        example: "beng"
+      set:
+        type: "string"
+        description: "Name or uri of the set to restrict results to"
+        required: false
+        example: "beng:gtaa"
+      conceptScheme:
+        type: "string"
+        description: "Name or uri of the concept scheme to restrict results to"
+        required: false
+        examples:
+          example: "Namen"
+          example1: "beng:gtaa:Namen"
+      collection:
+        type: "string"
+        description: "Name or uri of the skos collection to restrict results to"
+        required: false
+      query:
+        type: "string"
+        description: "Search terms"
+        required: false
+        examples:
+          example: "ab c"
+          example1: "*a"
+          example2: "a*"
+          example3: "a*b"
+          example4: "a AND b OR NOT c"
+          example5: "(a OR b) AND c"
+          example6: "\\\\\""
+          example7: "\\\\*"
+          example8: "\\\\\\\\"
+      fields:
+        type: "array"
+        description: "Specify which data fields should be searched in"
+        minItems: 1
+        required: false
+        items:
+          type: "string"
+          default: "label"
+          examples:
+            example: "label@en"
+            example1: "altLabel"
+            example2: "note"
+            example3: "scopeNote"
+            example4: "example@nl"
+            example5: "notation"
+      limit:
+        type: "integer"
+        default: 100
+        minimum: 1
+        maximum: 1000
+        required: false
+      last:
+        type: "skos:uri"
+        description: "Last concept returned from the previous call"
+        required: false
+      level:
+        type: "integer"
+        description: "Depth for resolving the data"
+        default: 1
+        enum:
+        - 1
+        - 2
+        required: false
+      props:
+        type: "array"
+        description: "Data fields that should be returned"
+        minItems: 1
+        required: false
+        items:
+          type: "propsValues"
+        example:
+          value: "uri,prefLabel,definition"
+          strict: false
+      lang:
+        type: "string"
+        description: "List of languages to return data for"
+        required: false
+        example: "en,nl"
+  post:
+    displayName: "Add a new concept"
+    responses:
+      201:
+        body:
+          type: "object"
+    securedBy:
+    - "API"
+/concepts/{id}:
+  displayName: "Return specific concept"
+  uriParameters:
+    id:
+      type: "string"
+  get:
+    displayName: "Retrieve specific concept based on the OpenSKOS id"
+  put:
+    displayName: "Create concept"
+    description: "Create concept with id {id}"
+    body:
+      application/xml:
+        type: "object"
+/concepts/uri/{uri}:
+  displayName: "Return specific concept identified via its URI"
+  uriParameters:
+    uri:
+      type: "string"
+  get:
+    displayName: "Retrieve specific concept based on the URI"
+/collections:
+  displayName: "Operations on collections"
+  get:
+    displayName: "Retrieve collections"
+    queryParameters:
+      level:
+        type: "string"
+        required: false
+      limit:
+        type: "string"
+        required: false
+      last:
+        type: "string"
+        required: false
+/collections/{id}:
+  displayName: "Retrieve specific collection based on the OpenSKOS id"
+  uriParameters:
+    id:
+      type: "string"
+  get:
+    displayName: "Retrieve collection specified by URI"
+/collections/uri/{uri}:
+  uriParameters:
+    uri:
+      type: "string"
+  get:
+    displayName: "Retrieve collection specified by URI"
+/relations:
+  get:
+    displayName: "Relations"
+    queryParameters:
+      subject:
+        type: "skos:uri"
+        required: false
+      types:
+        type: "string"
+        required: false
+        examples:
+          example: "semanticRelation"
+          example1: "broader"
+          example2: "mappingRelation"
+          example3: "closeMatch"
+          example4: "inScheme"
+          example5: "topConceptOf"
+          example6: "member"
+          example7: "hasTopConcept"
+          example8: "openskos:inCollection"
+      object:
+        type: "skos:uri"
+        required: false
+      props:
+        type: "string"
+        description: "Fields to return"
+        default: "uri"
+        required: false
+        examples:
+          example: "uri"
+          example1: "title"
+          example2: "label"
+          example3: "label@en"
+          example4: "prefLabel@nl"
+      limit:
+        type: "integer"
+        default: 100
+        minimum: 1
+        maximum: 1000
+        required: false
+      last:
+        type: "skos:uri"
+        description: "Last concept returned from the previous call"
+        required: false
