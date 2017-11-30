@@ -3,22 +3,21 @@
 ## TODO
 
 - [ ] SPARQL paging experiments
-  - use LIMIT and OFFSET
-  - use a last seen concept
-  - can we use the [hydra paging (`hydra:PartialCollectionView`)](http://www.hydra-cg.com/spec/latest/core/#collections) (envisioned part of the NDE generic API)
-- [ ] how to handle URIs, e.g., register prefix in `application.ini`
+  - [ ] use LIMIT and OFFSET
+  - [ ] use a last seen concept
+  - [ ] can we use the [hydra paging (`hydra:PartialCollectionView`)]?(http://www.hydra-cg.com/spec/latest/core/#collections) (envisioned part of the NDE generic API)
+- [ ] how to handle URIs
+  - e.g., register prefix in `application.ini` (see [prefixes](#prefixes)
   - user specified relation types
   - user provided properties
   - refering to OpenSKOS resources by their foreign URIs
 - [ ] check if we follow RFC 6570 correctly
-- [ ] what do we use for refering to internal resources
-  - `uri` or `id` or both
-  - e.g., `.../collections?institution=12345-6789-ABC` and/or `.../collections?institution=http://www.example.com/`
-  - allow prefixes (see above)
+- [X] what do we use for refering to internal resources
+  - [X] `uri` or `id` or both
+  - [ ] allow prefixes (see above)
 - [ ] add cardinalities
-- [ ] if an higher level includes concepts, e.g., for collections and concept schemes, also include the concept `<projection params>.props`?
-  - the higher levels are equivalent to concept with `<filter params>`, remove them?
-- [ ] camelCase in params, e.g., `conceptScheme`, but not in endpoints, e.g., `.../conceptscheme`?
+- [X] if an higher level includes concepts, e.g., for collections and concept schemes, also include the concept `<projection params>.props`? NO
+- [X] camelCase in params, e.g., `conceptScheme`, but not in endpoints, e.g., `.../conceptscheme`? OK as it is
 - [ ] check how set and institution are expressed in OpenSKOS 2, e.g., `openskos:set` or `openskos:institution` (see concept `<projection params>`)?
 
 ## Foundation
@@ -32,7 +31,7 @@
   * focus on read-only first
 * hide implementation details (Lucene query language)
 * using just OpenSKOS generated URIs should work out of the box
-* using foreign URIs (external SKOS imported into OpenSKOS) should work out of the box
+* using foreign URIs (external SKOS imported into OpenSKOS) should work out of the box (just don't use id endpoints)
 
 ## Notation
 
@@ -50,11 +49,11 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 
 ## concept schemes
 
-`.../conceptscheme?<query params>&<filter params>&<limit params>`
+`.../conceptschemes?<query params>&<filter params>&<limit params>`
 
 `.../conceptscheme/{id}?<query params>` (native uri)
 
-`.../conceptscheme/?uri={uri}&<query params>` (foreign uri)
+`.../conceptscheme?uri={uri}&<query params>` (foreign uri)
 
 `<query params>`
 * level:
@@ -64,8 +63,8 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * `4`: + object properties of the concept
 
 `<filter params>`
-* institution=`institution`
-* set=`set`
+* institutions=`comma separated list of institution URIs or IDs`
+* sets=`set`
 
 `<limit params>`
 * limit=`nr of concept schemes to return`
@@ -75,20 +74,18 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 
 `.../collections?<query params>&<filter params>&<limit params>`
 
-`.../collections/{id}?<query params>` (native uri)
+`.../collection/{id}?<query params>` (native uri)
 
-`.../collections/?uri={uri}&<query params>` (foreign uri)
+`.../collection?uri={uri}&<query params>` (foreign uri)
 
 `<query params>`
 * level:
   * `1`: data properties of the collection (default)
   * `2`: + object properties of the collection
-  * `3`: + data properties of the concept
-  * `4`: + object properties of the concept
 
 `<filter params>`
-* institution=`institution`
-* set=`set`
+* institutions=`institution`
+* sets=`set`
 
 `<limit params>`
 * limit=`nr of collections to return`
@@ -98,9 +95,9 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 
 `.../concepts?<selection params>&<filter params>&<projection params>&<order params>&<limit params>`
 
-`.../concepts/{id}?<projection params>` (native uri)
+`.../concept/{id}?<projection params>` (native uri)
 
-`.../concepts?uri={uri}<projection params>` (foreign uri)
+`.../concept?uri={uri}&<projection params>` (foreign uri)
 
 `<selection params>`
 * text=`search terms`
@@ -127,10 +124,10 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * notation
 
 `<filter params>`
-* institution=`institution`
-* set=`set`
-* conceptScheme=`concept scheme`
-* collection=`collection`
+* institutions=`institution`
+* sets=`set`
+* conceptSchemes=`concept scheme`
+* collections=`collection`
 
 `<projection params>`
 * level=`which properties to return`
@@ -138,6 +135,7 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * `2`: + object properties of the concepts
 * props=`comma separated list of`
   * default: uri,prefLabel,definition
+  * all
   * uri
   * label(@{lang})?
     * prefLabel(@{lang})?
@@ -216,10 +214,10 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * notation
 
 `<filter params>`
-* institution=`institution`
-* set=`set`
-* conceptScheme=`concept scheme`
-* collection=`collection`
+* institutions=`institution`
+* sets=`set`
+* conceptSchemes=`concept scheme`
+* collections=`collection`
 
 ## relations
 
@@ -262,8 +260,12 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 * limit=`nr of subjects to return`
 * last=`last seen subject`
 
-## relation types (??)
+## relation types
 
-## user (??)
+## user
 
-## status (??)
+## status
+
+## prefixes
+
+NOTE: the namespaces are currently hardcoded (not in the MySQL anymore or in application.ini), so to make the set extensible (again) will require some work.
