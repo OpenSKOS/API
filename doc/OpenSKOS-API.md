@@ -5,7 +5,7 @@
 - [ ] SPARQL paging experiments
   - [ ] use LIMIT and OFFSET
   - [ ] use a last seen concept
-  - [ ] can we use the [hydra paging (`hydra:PartialCollectionView`)]?(http://www.hydra-cg.com/spec/latest/core/#collections) (envisioned part of the NDE generic API)
+  - [ ] can we use the [hydra paging (`hydra:PartialCollectionView`)](http://www.hydra-cg.com/spec/latest/core/#collections)? (envisioned part of the NDE generic API)
 - [ ] how to handle URIs
   - e.g., register prefix in `application.ini` (see [prefixes](#prefixes)
   - user specified relation types
@@ -19,6 +19,28 @@
 - [X] if an higher level includes concepts, e.g., for collections and concept schemes, also include the concept `<projection params>.props`? NO
 - [X] camelCase in params, e.g., `conceptScheme`, but not in endpoints, e.g., `.../conceptscheme`? OK as it is
 - [ ] check how set and institution are expressed in OpenSKOS 2, e.g., `openskos:set` or `openskos:institution` (see concept `<projection params>`)?
+- [ ] analyze if major (read) functionality of the editor is covered in an appropriate amount of requests, e.g., a list should not require a call for each concept
+- [ ] error codes
+  - 400 if other parameters have a clash with search profile
+- [ ] return representations (at least JSON-LD, RDF/XML, TriG/TriX, incl. Hydra paging vocab)
+- [X] support for dates in projection, selection/filter and order
+  - submitted
+  - modified
+  - accepted
+  - openskos:deleted
+  - NOTE: SPARQL has no support for xsd:duration, but does have support for operators on xsd:dateTime, so some (all?) ranges can be translated into boolean queries using operators (`2018` => `x >= xsd:dateTime('1-1-2018') and x <= xsd:dateTime('31-12-2018')`)
+  - NOTE: maybe support some shortcuts, e.g., today, yesterday, this week, last week, this month, last month, this year, last year
+- [X] support for status in projection, selection/filter and order (?)
+- [X] support for user in projection, selection/filter and order (?)
+  - creator
+  - openskos:modifiedBy
+  - openskos:acceptedBy
+  - openskos:deletedBy
+- [X] support for search profiles
+- [ ] concepts is used as the main discussion endpoint, sync with other endpoints
+- [X] support for SKOS-XL labels
+- [ ] check consistent use of institution vs tenant
+- [ ] discuss the first class citizenship of `skosxl:Labels`
 
 ## Foundation
 
@@ -62,9 +84,12 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * `3`: + data properties of the concept
   * `4`: + object properties of the concept
 
+NOTE: the OpenSKOS editor should never use level `3` or `4`, they more interesting for external LD parties
+
 `<filter params>`
 * institutions=`comma separated list of institution URIs or IDs`
 * sets=`set`
+* searchProfile=`id of a search profile`
 
 `<limit params>`
 * limit=`nr of concept schemes to return`
@@ -84,8 +109,9 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * `2`: + object properties of the collection
 
 `<filter params>`
-* institutions=`institution`
-* sets=`set`
+* institutions=`comma separated list of institution URIs or IDs`
+* sets=`comma separated list of set URIs or IDs`
+* searchProfile=`id of a search profile`
 
 `<limit params>`
 * limit=`nr of collections to return`
@@ -124,10 +150,27 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * notation
 
 `<filter params>`
-* institutions=`institution`
-* sets=`set`
-* conceptSchemes=`concept scheme`
-* collections=`collection`
+* institutions=`comma separated list of institution URIs or IDs`
+* sets=`comma separated list of set URIs or IDs`
+* conceptSchemes=`comma separated list of concept scheme URIs or IDs`
+* collections=`comma separated list of collection URIs or IDs`
+* searchProfile=`id of a search profile`
+* dateSubmitted=`xsd:duration and some shortcuts (?)`
+* modified=`xsd:duration and some shortcuts (?)`
+* dateAccepted=`xsd:duration and some shortcuts (?)`
+* openskos:deleted=`xsd:duration and some shortcuts (?)`
+* statuses=`comma separated list of statuses`
+  * `candidate`
+  * `approved`
+  * `redirected`
+  * `not_compliant`
+  * `rejected`
+  * `obsolete`
+  * `deleted`
+* creator=`comma separated list of user URIs or IDs`
+* openskos:modifiedBy=`comma separated list of user URIs or IDs`
+* openskos:acceptedBy=`comma separated list of user URIs or IDs`
+* openskos:deletedBy=`comma separated list of user URIs or IDs`
 
 `<projection params>`
 * level=`which properties to return`
@@ -153,8 +196,8 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
     * broader
     * narrower
     * related
-    * broaderTransative
-    * narrowerTransative
+    * broaderTransitive
+    * narrowerTransitive
     * mappingRelation
       * closeMatch
       * exactMatch
@@ -167,10 +210,22 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * openskos:status
   * openskos:set [TODO: check]
   * openskos:institution [TODO: check]
-  * {user relation types} [TODO: how to handle URIs, e.g., register prefix in application.ini]
+  * dates
+    * dateSubmitted
+    * modified
+    * dateAccepted
+    * openskos:deleted
+  * users
+    * creator
+    * openskos:modifiedBy
+    * openskos:acceptedBy
+    * openskos:deletedBy
+  * {user relation types}
   * {user properties}
 * lang=`comma separated list of known language codes (BCP 47)`
   * if not specified all languages are projected (default)
+* skosxl=`yes or no` (default: follow configuration of the tenant)
+  NOTE: `skosxl=yes` can result in a `400` if one of the tenants doesn't support SKOS-XL
 
 `<order params>`
 * order=`comma separated list of`
@@ -184,6 +239,10 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 * set
 * conceptScheme
 * collection
+* dateSubmitted
+* modified
+* dateAccepted
+* openskos:deleted
 
 `<limit params>`
 * limit=`nr of concepts to return`
@@ -192,6 +251,9 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 ## autocomplete
 
 `.../autocomplete?<selection params>&<projection params>&<filter params>`
+
+NOTE: or
+`.../{concepts|labels}/autocomplete?<selection params>&<projection params>&<filter params>`
 
 `<selection params>`
 * text=`substring to match case insensitively`
@@ -207,6 +269,7 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 * props=`comma separated list of`
   * default: uri,prefLabel
   * uri
+  * literalForm
   * label(@{lang})?
     * prefLabel(@{lang})?
     * altLabel(@{lang})?
@@ -214,10 +277,76 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * notation
 
 `<filter params>`
-* institutions=`institution`
-* sets=`set`
-* conceptSchemes=`concept scheme`
-* collections=`collection`
+* institutions=`comma separated list of institution URIs or IDs`
+* sets=``comma separated list of set URIs or IDs``
+* conceptSchemes=`comma separated list of concept scheme URIs or IDs`
+* collections=`comma separated list of collection URIs or IDs`
+* searchProfile=`id of a search profile`
+* dateSubmitted=`xsd:duration and some shortcuts (?)`
+* modified=`xsd:duration and some shortcuts (?)`
+* dateAccepted=`xsd:duration and some shortcuts (?)`
+* openskos:deleted=`xsd:duration and some shortcuts (?)`
+* statuses=`comma separated list of statuses`
+  * `candidate`
+  * `approved`
+  * `redirected`
+  * `not_compliant`
+  * `rejected`
+  * `obsolete`
+  * `deleted`
+* creator=`comma separated list of user URIs or IDs`
+* openskos:modifiedBy=`comma separated list of user URIs or IDs`
+* openskos:acceptedBy=`comma separated list of user URIs or IDs`
+* openskos:deletedBy=`comma separated list of user URIs or IDs`
+* skosxl=`yes or no` (default: follow configuration of the tenant)
+  * TODO: is this nice?
+
+## labels
+
+NOTE: SKOS-XL
+
+`.../labels?<selection params>&<filter params>&<projection params>&<order params>&<limit params>`
+
+NOTE: maybe only when `skosxl:label` are first class citizens
+
+`.../label/{id}?<projection params>` (native uri)
+
+`.../label?uri={uri}&<projection params>` (foreign uri)
+
+`<projection params>`
+* level=`which properties to return`
+  * `1`: data properties of the concepts (default)
+  * `2`: + object properties of the concepts
+* props=`comma separated list of`
+  * default: uri,literalForm
+  * all
+  * uri
+  * literalForm(@{lang})?
+  * isPrefLabelOf (inverse of prefLabel)
+  * isAltLabelOf (inverse of altLabel)
+  * isHiddenLabelOf (inverse of hiddenLabel)
+  * labelRelation
+  * openskos:set [TODO: check]
+  * openskos:institution (NOTE: is currently openskos:tenant)
+  * status
+    * NOTE: not supported at the moment, TODO discuss if labels should be first class citizens
+    * "`alive`"
+    * `deleted`
+  * dates
+    * modified
+    * NOTE: maybe also have?
+      * dateSubmitted
+      * openskos:deleted
+  * users
+    * NOTE: not supported at the moment, TODO discuss if labels should be first class citizens
+    * creator
+    * openskos:modifiedBy
+    * openskos:acceptedBy
+    * openskos:deletedBy
+  * {user relation types}
+  * {user properties}
+* lang=`comma separated list of known language codes (BCP 47)`
+  * if not specified all languages are projected (default)
 
 ## relations
 
@@ -230,8 +359,8 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
     * broader
     * narrower
     * related
-    * broaderTransative
-    * narrowerTransative
+    * broaderTransitive
+    * narrowerTransitive
     * mappingRelation
       * closeMatch
       * exactMatch
@@ -240,9 +369,17 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
       * relatedMatch
   * inScheme
     * topConceptOf
+  * isReplacedBy (NOTE: currently not yet a triple in OpenSKOS)
+  * replaces (NOTE: currently not yet a triple in OpenSKOS)
   * openskos:inCollection (OpenSKOS specific inverse of skos:member) [NOTE: currently inSkosCollection]
+  * openskos:inSet (NOTE: currently openskos:set)
+  * openskos:tenant
   * member
   * hasTopConcept
+  * prefLabel
+  * altLabel
+  * hiddenLabel
+  * labelRelation
   * {user relation types} [TODO: how to handle URIs, e.g., register prefix in application.ini]
 * object=`uri`
 
@@ -256,15 +393,26 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
     * altLabel(@{lang})?
     * hiddenLabel(@{lang})?
 
+`filter params`
+TODO: what does it mean for subject and object?
+
 `<limit params>`
 * limit=`nr of subjects to return`
 * last=`last seen subject`
 
 ## relation types
 
-## user
+## users
 
-## status
+## roles
+
+## search profiles
+
+NOTE: conditions in a search profile might potentially clash with other selection/filter parameters.
+
+## statuses
+
+NOTE: GET only, as the list of statuses is fixed
 
 ## prefixes
 
