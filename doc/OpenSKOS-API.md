@@ -322,9 +322,9 @@ NOTE: maybe only when `skosxl:label` are first class citizens
   * all
   * uri
   * literalForm(@{lang})?
-  * isPrefLabelOf (inverse of prefLabel)
-  * isAltLabelOf (inverse of altLabel)
-  * isHiddenLabelOf (inverse of hiddenLabel)
+  * openskos:isPrefLabelOf (inverse of prefLabel)
+  * openskos:isAltLabelOf (inverse of altLabel)
+  * openskos:isHiddenLabelOf (inverse of hiddenLabel)
   * labelRelation
   * openskos:set [TODO: check]
   * openskos:institution (NOTE: is currently openskos:tenant)
@@ -379,6 +379,9 @@ NOTE: maybe only when `skosxl:label` are first class citizens
   * prefLabel
   * altLabel
   * hiddenLabel
+  * openskos:isPrefLabelOf (inverse of prefLabel)
+  * openskos:isAltLabelOf (inverse of altLabel)
+  * openskos:isHiddenLabelOf (inverse of hiddenLabel)
   * labelRelation
   * {user relation types} [TODO: how to handle URIs, e.g., register prefix in application.ini]
 * object=`uri`
