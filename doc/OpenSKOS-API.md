@@ -67,7 +67,48 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
 
 ## institutions
 
+`.../institutions?<query params>&<limit params>`
+
+`.../institution/{id}?<query params>` (native uri)
+
+`.../institution?uri={uri}&<query params>` (foreign uri)
+
+`<query params>`
+* level:
+  * `1`: data properties of the institution (default)
+  * `2`: + object properties of the institution
+  * `3`: + data properties of the set
+  * `4`: + object properties of the set
+
+NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more interesting for external LD parties
+
+`<limit params>`
+* limit=`nr of institutions to return`
+* last=`offset or last seen institution`
+
 ## sets
+
+`.../sets?<query params>&<filter params>&<limit params>`
+
+`.../set/{id}?<query params>` (native uri)
+
+`.../set?uri={uri}&<query params>` (foreign uri)
+
+`<query params>`
+* level:
+  * `1`: data properties of the set (default)
+  * `2`: + object properties of the set
+  * `3`: + data properties of the concept scheme or collection
+  * `4`: + object properties of the concept scheme or collection
+
+NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more interesting for external LD parties
+
+`<filter params>`
+* institutions=`comma separated list of institution URIs or IDs`
+
+`<limit params>`
+* limit=`nr of sets to return`
+* last=`offset or last seen set`
 
 ## concept schemes
 
@@ -84,7 +125,7 @@ The API endpoints are described using [URI templates](http://www.rfc-editor.org/
   * `3`: + data properties of the concept
   * `4`: + object properties of the concept
 
-NOTE: the OpenSKOS editor should never use level `3` or `4`, they more interesting for external LD parties
+NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more interesting for external LD parties
 
 `<filter params>`
 * institutions=`comma separated list of institution URIs or IDs`
@@ -107,6 +148,10 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they more interesti
 * level:
   * `1`: data properties of the collection (default)
   * `2`: + object properties of the collection
+  * `3`: + data properties of the concept
+  * `4`: + object properties of the concept
+
+NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more interesting for external LD parties
 
 `<filter params>`
 * institutions=`comma separated list of institution URIs or IDs`
@@ -253,6 +298,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they more interesti
 `.../autocomplete?<selection params>&<projection params>&<filter params>`
 
 NOTE: or
+
 `.../{concepts|labels}/autocomplete?<selection params>&<projection params>&<filter params>`
 
 `<selection params>`
