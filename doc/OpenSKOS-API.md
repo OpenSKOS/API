@@ -22,7 +22,7 @@
 - [ ] analyze if major (read) functionality of the editor is covered in an appropriate amount of requests, e.g., a list should not require a call for each concept
 - [ ] error codes
   - 400 if other parameters have a clash with search profile
-- [ ] return representations (at least JSON-LD, RDF/XML, TriG/TriX, incl. Hydra paging vocab)
+- [ ] return representations (at least JSON-LD, RDF/XML, TriG/TriX, (incl. Hydra paging vocab), HTML)
 - [X] support for dates in projection, selection/filter and order
   - submitted
   - modified
@@ -41,19 +41,37 @@
 - [X] support for SKOS-XL labels
 - [ ] check consistent use of institution vs tenant
 - [ ] discuss the first class citizenship of `skosxl:Labels`
+- [ ] add format parameter
 
 ## Foundation
 
 * content negotiation
-  * also a parameter (?format=) or uri part (.n3)
-  * incl. HTML (on equal with JSON/RDF)
+  * also a parameter (?format=)
+  * incl. HTML (containing the same info as the RDF serializations)
   * JSON-LD instead of proprietary JSON
-* API key in header
+  * support at least JSON-LD, RDF/XML, TriG/TriX, (incl. Hydra paging vocab), HTML
+  * all should return the same info, which is controlled (potentially) by the projection parameters
+* API key in header and use HTTPS always
   * good for security, bad for traceability (look at server logs and see who has done what)
-  * focus on read-only first
+* focus on read-only first
 * hide implementation details (Lucene query language)
 * using just OpenSKOS generated URIs should work out of the box
 * using foreign URIs (external SKOS imported into OpenSKOS) should work out of the box (just don't use id endpoints)
+
+## Does the new API remedy critisism on the old API
+- [X] the API should identify **resources** instead of **actions** (TODO: maybe autocomplete is still too action like)
+- [/] use the same URI for all HTTP CRUD methods (NOTE: currently the API only defines the GET methods, but the same (singular) endpoints should support the CRUD methods in the future. POSTs could happen on the plural endpoints as well.)
+- [/] support content negotiation, so you have neat (independent of format) conceptual resource URIs, i.e., not representation specific URIs (NOTE: a foundation of the new API is support content negotiation. However, support for specifying format in a uri part breaks this, so only support content negotiation or a format parameter!)
+- [/] client can interact choosing one of the supported RDF representations (NOTE: for the CRUD operations all RDF serializations supported for GET should also be supported for PUT and POST. All representations should contain the same information! HTML is only supported for GET.)
+- [X] describe the openskos namespace, so the 
+- [/] don't pass API keys in the body (NOTE: API keys should always be passed in HTTPS based requests)
+- [X] use JSON-LD, propriety JSON is not self descriptive 
+- [/] HATEOAS (NOTE: there might not be URIs just literals for some entities (e.g., NAA) due to legacy)
+- [/] HTML representations should provide HATEOAS links
+- [?] replace API keys by OAuth(2)
+- [?] use the Linked Data Platorm (NOTE: at least paging collides with Hydra paging)
+- [?] use Triple Pattern Fragments
+
 
 ## Notation
 
@@ -164,7 +182,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 ## concepts
 
-`.../concepts?<selection params>&<filter params>&<projection params>&<order params>&<limit params>`
+`.../concepts?<selection params>&<filter params>&<projection params>&<order params>&<limit params>&<format params>`
 
 `.../concept/{id}?<projection params>` (native uri)
 
@@ -295,11 +313,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 ## autocomplete
 
-`.../autocomplete?<selection params>&<projection params>&<filter params>`
-
-NOTE: or
-
-`.../{concepts|labels}/autocomplete?<selection params>&<projection params>&<filter params>`
+`.../concepts/autocomplete?<selection params>&<projection params>&<filter params>`
 
 `<selection params>`
 * text=`substring to match case insensitively`
@@ -315,7 +329,6 @@ NOTE: or
 * props=`comma separated list of`
   * default: uri,prefLabel
   * uri
-  * literalForm
   * label(@{lang})?
     * prefLabel(@{lang})?
     * altLabel(@{lang})?
@@ -346,6 +359,42 @@ NOTE: or
 * openskos:deletedBy=`comma separated list of user URIs or IDs`
 * skosxl=`yes or no` (default: follow configuration of the tenant)
   * TODO: is this nice?
+
+`.../labels/autocomplete?<selection params>&<projection params>&<filter params>`
+
+`<selection params>`
+* text=`substring to match case insensitively`
+
+`<projection params>`
+* props=`comma separated list of`
+  * default: uri,literalForm
+  * uri
+  * literalForm
+
+`<filter params>`
+* institutions=`comma separated list of institution URIs or IDs`
+* sets=``comma separated list of set URIs or IDs``
+* conceptSchemes=`comma separated list of concept scheme URIs or IDs`
+* collections=`comma separated list of collection URIs or IDs`
+* searchProfile=`id of a search profile`
+* dateSubmitted=`xsd:duration and some shortcuts (?)`
+* modified=`xsd:duration and some shortcuts (?)`
+* dateAccepted=`xsd:duration and some shortcuts (?)`
+* openskos:deleted=`xsd:duration and some shortcuts (?)`
+* statuses=`comma separated list of statuses`
+  * `candidate`
+  * `approved`
+  * `redirected`
+  * `not_compliant`
+  * `rejected`
+  * `obsolete`
+  * `deleted`
+* creator=`comma separated list of user URIs or IDs`
+* openskos:modifiedBy=`comma separated list of user URIs or IDs`
+* openskos:acceptedBy=`comma separated list of user URIs or IDs`
+* openskos:deletedBy=`comma separated list of user URIs or IDs`
+
+TODO: lots of these bookkeeping-based filters depend on SKOS-XL labels being first class citizens!
 
 ## labels
 
@@ -466,3 +515,13 @@ NOTE: GET only, as the list of statuses is fixed
 ## prefixes
 
 NOTE: the namespaces are currently hardcoded (not in the MySQL anymore or in application.ini), so to make the set extensible (again) will require some work.
+
+## ping
+
+Gives info about the OpenSKOS instance, e.g., version, health.
+
+## vocab
+
+Gives an RDFS resource describing properties and classes in the openskos namespace.
+
+NOTE: might have to be only available on the openskos.org, i.e., http://openskos.org/vocab. This should correspond with the openskos namespace URI (`xmlns:openskos="http://openskos.org/vocab#"`). However, at the moment this is `http://openskos.org/xmlns#`.
