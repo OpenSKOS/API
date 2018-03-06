@@ -11,7 +11,7 @@
   - user specified relation types
   - user provided properties
   - refering to OpenSKOS resources by their foreign URIs
-- [ ] check if we follow RFC 6570 correctly
+- [X] check if we follow RFC 6570 correctly (NO)
 - [X] what do we use for refering to internal resources
   - [X] `uri` or `id` or both
   - [ ] allow prefixes (see above)
@@ -20,8 +20,14 @@
 - [X] camelCase in params, e.g., `conceptScheme`, but not in endpoints, e.g., `.../conceptscheme`? OK as it is
 - [ ] check how set and institution are expressed in OpenSKOS 2, e.g., `openskos:set` or `openskos:institution` (see concept `<projection params>`)?
 - [X] analyze if major (read) functionality of the editor is covered in an appropriate amount of requests, e.g., a list should not require a call for each concept
-- [ ] error codes
+- [/] return codes
+  - 200 everything OK
   - 400 if other parameters have a clash with search profile
+  - 401 or 403 if unauthorized
+  - 404 a resource is not found
+  - 405 method not allowed, e.g., a PUT on a list
+  - 406 unsupported RDF serialization
+  - 500 and higher: oops
 - [ ] return representations (at least JSON-LD, RDF/XML, TriG/TriX, (incl. Hydra paging vocab), HTML)
 - [X] support for dates in projection, selection/filter and order
   - submitted
@@ -217,14 +223,14 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 ## concepts
 
-`.../concepts?<selection params>&<filter params>&<projection params>&<order params>&<limit params>&<format params>`
+`.../concepts?<selection params>[?]&<filter params>&<projection params>&<order params>&<limit params>&<format params>`
 
 `.../concept/{id}?<projection params>` (native uri)
 
 `.../concept?uri={uri}&<projection params>` (foreign uri)
 
 `<selection params>`
-* text=`search terms`
+* text[1]=`search terms`
   * support for
     * strings: ab c
     * wildcard: \*a a\* a*b
@@ -232,7 +238,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
     * brackets: (a OR b) AND c
     * phrases: "ab c"
     * escapes: \\" \\* \\\\
-* fields=`comma separated list of`
+* fields[?]=`comma separated list of`
   * default: label
   * label(@{lang})?
     * prefLabel(@{lang})?
