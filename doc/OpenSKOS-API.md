@@ -2,8 +2,8 @@
 
 ## TODO
 
-- [ ] SPARQL paging experiments
-  - [ ] use LIMIT and OFFSET
+- [X] SPARQL paging experiments
+  - [X] use LIMIT and OFFSET
   - [ ] use a last seen concept
   - [ ] can we use the [hydra paging (`hydra:PartialCollectionView`)](http://www.hydra-cg.com/spec/latest/core/#collections)? (envisioned part of the NDE generic API)
 - [ ] how to handle URIs
@@ -19,7 +19,7 @@
 - [X] if an higher level includes concepts, e.g., for collections and concept schemes, also include the concept `<projection params>.props`? NO
 - [X] camelCase in params, e.g., `conceptScheme`, but not in endpoints, e.g., `.../conceptscheme`? OK as it is
 - [ ] check how set and institution are expressed in OpenSKOS 2, e.g., `openskos:set` or `openskos:institution` (see concept `<projection params>`)?
-- [ ] analyze if major (read) functionality of the editor is covered in an appropriate amount of requests, e.g., a list should not require a call for each concept
+- [X] analyze if major (read) functionality of the editor is covered in an appropriate amount of requests, e.g., a list should not require a call for each concept
 - [ ] error codes
   - 400 if other parameters have a clash with search profile
 - [ ] return representations (at least JSON-LD, RDF/XML, TriG/TriX, (incl. Hydra paging vocab), HTML)
@@ -37,7 +37,7 @@
   - openskos:acceptedBy
   - openskos:deletedBy
 - [X] support for search profiles
-- [ ] concepts is used as the main discussion endpoint, sync with other endpoints
+- [/] concepts is used as the main discussion endpoint, sync with other endpoints
 - [X] support for SKOS-XL labels
 - [ ] check consistent use of institution vs tenant
 - [ ] discuss the first class citizenship of `skosxl:Labels`
@@ -58,20 +58,46 @@
 * using just OpenSKOS generated URIs should work out of the box
 * using foreign URIs (external SKOS imported into OpenSKOS) should work out of the box (just don't use id endpoints)
 
-## Does the new API remedy critisism on the old API
+## Does the new API remedy critisism on the old API?
 - [X] the API should identify **resources** instead of **actions** (TODO: maybe autocomplete is still too action like)
 - [/] use the same URI for all HTTP CRUD methods (NOTE: currently the API only defines the GET methods, but the same (singular) endpoints should support the CRUD methods in the future. POSTs could happen on the plural endpoints as well.)
 - [/] support content negotiation, so you have neat (independent of format) conceptual resource URIs, i.e., not representation specific URIs (NOTE: a foundation of the new API is support content negotiation. However, support for specifying format in a uri part breaks this, so only support content negotiation or a format parameter!)
 - [/] client can interact choosing one of the supported RDF representations (NOTE: for the CRUD operations all RDF serializations supported for GET should also be supported for PUT and POST. All representations should contain the same information! HTML is only supported for GET.)
-- [X] describe the openskos namespace, so the 
+- [X] describe the openskos namespace, so the responses are self describing
 - [/] don't pass API keys in the body (NOTE: API keys should always be passed in HTTPS based requests)
 - [X] use JSON-LD, propriety JSON is not self descriptive 
 - [/] HATEOAS (NOTE: there might not be URIs just literals for some entities (e.g., NAA) due to legacy)
 - [/] HTML representations should provide HATEOAS links
 - [?] replace API keys by OAuth(2)
-- [?] use the Linked Data Platorm (NOTE: at least paging collides with Hydra paging)
+- [?] use the Linked Data Platform (NOTE: at least paging collides with Hydra paging)
 - [?] use Triple Pattern Fragments
 
+## Does the new API provide good coverage for the functionality provided by the editor?
+
+- [X] get the user profile
+  1. `../user`
+- [X] list concept schemes
+  1. `.../conceptschemes?level=1`
+  1. or with a search profile: `.../conceptschemes?level=1&searchProfile=<id>`
+- [X] list concepts in a concept scheme
+  1. ```.../concepts?conceptScheme=<id or URI>&props=prefLabel```
+- [X] show a selected concept and its relations
+  1. info about the concept: ```.../concept/<id>?level=2```
+  2. relations from the concept: ```.../relations?subject=<id>&types=semanticRelation&props=prefLabel```
+  3. relations to the concept: ```.../relations?object=<id>&types=semanticRelation&props=prefLabel```
+- [X] search for a concept
+  1. ```.../concepts?text=<search terms>&props=prefLabel```
+  1. or with a search profile: ```.../concepts?text=<search terms>&props=prefLabel&searchProfile=<id>```
+- [X] get the info on the institution
+  1. `.../institution/<id>?level-1` (NOTE: id is known from the user profile) (TODO: check if a higher level is needed due to VCard)
+- [X] get the list of sets
+  1. `.../sets?institutions=<id>&level=1`
+- [X] get the info on a set
+  1. `.../set/<id>?level=1` (TODO: check if a higher level is needed due to VCard)
+- [X] get the list of concept schemes
+  1. `.../conceptschemes?institutions=<id>&level=1`
+- [X] get the info on a concept scheme
+  1. `.../conceptscheme/<id>?level=1`
 
 ## Notation
 
@@ -102,7 +128,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<limit params>`
 * limit=`nr of institutions to return`
-* last=`offset or last seen institution`
+* offset=`offset seen institution`
 
 ## sets
 
@@ -126,7 +152,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<limit params>`
 * limit=`nr of sets to return`
-* last=`offset or last seen set`
+* offset=`offset of last seen set` (NOTE: starts a 0)
 
 ## concept schemes
 
@@ -152,7 +178,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<limit params>`
 * limit=`nr of concept schemes to return`
-* last=`offset or last seen concept scheme`
+* offset=`offset of last seen concept scheme` (NOTE: starts at 0)
 
 ## collections
 
@@ -178,7 +204,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<limit params>`
 * limit=`nr of collections to return`
-* last=`offset or last seen collection`
+* offset=`offset of last seen collection` (NOTE: starts at 0)
 
 ## concepts
 
@@ -309,7 +335,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<limit params>`
 * limit=`nr of concepts to return`
-* last=`last seen concept`
+* offset=`offset of last seen concept` (NOTE: starts at 0)
 
 ## autocomplete
 
@@ -491,16 +517,35 @@ NOTE: maybe only when `skosxl:label` are first class citizens
     * altLabel(@{lang})?
     * hiddenLabel(@{lang})?
 
-`filter params`
+`<filter params>`
 TODO: what does it mean for subject and object?
 
 `<limit params>`
 * limit=`nr of subjects to return`
-* last=`last seen subject`
+* offset=`offset of last seen subject` (NOTE: starts at 0)
 
 ## relation types
 
 ## users
+
+`.../users?<query params>&<limit params>`
+
+`.../user/{id}`
+
+`.../user`
+
+NOTE: the user endpoint without ID can be used to retrieve the profile of the logged in user, i.e., identified by her credentials or API key.
+
+NOTE: these endpoints will only return info if the user has admin rights, or asks for her own profile.
+
+`<query params>`
+* level:
+  * `1`: data properties of the user (default)
+  * `2`: + object properties of the user
+
+`<limit params>`
+* limit=`nr of institutions to return`
+* offset=`offset of last seen user` (NOTE: starts at 0)
 
 ## roles
 
