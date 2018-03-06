@@ -4,8 +4,8 @@
 
 - [X] SPARQL paging experiments
   - [X] use LIMIT and OFFSET
-  - [ ] use a last seen concept
-  - [ ] can we use the [hydra paging (`hydra:PartialCollectionView`)](http://www.hydra-cg.com/spec/latest/core/#collections)? (envisioned part of the NDE generic API)
+  - [ ] use a last seen concept (DECISION: No)
+  - [/] can we use the [hydra paging (`hydra:PartialCollectionView`)](http://www.hydra-cg.com/spec/latest/core/#collections)? (envisioned part of the NDE generic API)
 - [ ] how to handle URIs
   - e.g., register prefix in `application.ini` (see [prefixes](#prefixes)
   - user specified relation types
@@ -42,6 +42,7 @@
 - [ ] check consistent use of institution vs tenant
 - [ ] discuss the first class citizenship of `skosxl:Labels`
 - [ ] add format parameter
+- [ ] lists of many (all?) resources are filtered based on access rights, e.g., admin can see all, users can only see what belongs to their institution (or their searchProfile allows)
 
 ## Foundation
 
@@ -77,7 +78,7 @@
 - [X] get the user profile
   1. `../user`
 - [X] list concept schemes
-  1. `.../conceptschemes?level=1`
+  1. `.../conceptschemes?level=1&institions=<id>`
   1. or with a search profile: `.../conceptschemes?level=1&searchProfile=<id>`
 - [X] list concepts in a concept scheme
   1. ```.../concepts?conceptScheme=<id or URI>&props=prefLabel```
@@ -85,9 +86,17 @@
   1. info about the concept: ```.../concept/<id>?level=2```
   2. relations from the concept: ```.../relations?subject=<id>&types=semanticRelation&props=prefLabel```
   3. relations to the concept: ```.../relations?object=<id>&types=semanticRelation&props=prefLabel```
+  4. user specific relations to the concept: ```.../relations?object=<id>&types=mi:fasterThan&props=prefLabel```
 - [X] search for a concept
   1. ```.../concepts?text=<search terms>&props=prefLabel```
   1. or with a search profile: ```.../concepts?text=<search terms>&props=prefLabel&searchProfile=<id>```
+- [X] list of search profiles
+  1. `.../searchprofiles`
+- [x] info of a search profile
+  1. `.../searchprofile/<id>`
+  2. list of concept schemes: `.../conceptschemes?level=1`
+  3. list of sets: `.../sets?level=1`
+  4. list of institutions: `.../institutions?level=1`
 - [X] get the info on the institution
   1. `.../institution/<id>?level-1` (NOTE: id is known from the user profile) (TODO: check if a higher level is needed due to VCard)
 - [X] get the list of sets
@@ -526,6 +535,12 @@ TODO: what does it mean for subject and object?
 
 ## relation types
 
+`.../relationtypes`
+
+`.../relationtype/{id}` (native uri)
+
+`.../relationtype?uri={uri}` (foreign uri)
+
 ## users
 
 `.../users?<query params>&<limit params>`
@@ -549,23 +564,37 @@ NOTE: these endpoints will only return info if the user has admin rights, or ask
 
 ## roles
 
+`.../roles`
+
 ## search profiles
+
+`.../searchprofiles`
+
+`.../searchprofile/{id}`
 
 NOTE: conditions in a search profile might potentially clash with other selection/filter parameters.
 
 ## statuses
 
+`.../statuses`
+
 NOTE: GET only, as the list of statuses is fixed
 
 ## prefixes
 
-NOTE: the namespaces are currently hardcoded (not in the MySQL anymore or in application.ini), so to make the set extensible (again) will require some work.
+`.../prefixes`
+
+NOTE: the namespaces are currently hardcoded (not in the MySQL anymore or in `application.ini`), so to make the set extensible (again) will require some work. Extension might only be possible via `application.ini`, so the endpoint could be only a GET.
 
 ## ping
+
+`.../ping`
 
 Gives info about the OpenSKOS instance, e.g., version, health.
 
 ## vocab
+
+`.../vocab`
 
 Gives an RDFS resource describing properties and classes in the openskos namespace.
 
