@@ -81,21 +81,23 @@
 
 ## Does the new API provide good coverage for the functionality provided by the editor?
 
+- [X] check if the backend can be worked with
+  1. `.../ping`
 - [X] get the user profile
-  1. `../user`
+  1. `.../user`
 - [X] list concept schemes
   1. `.../conceptschemes?level=1&institions=<id>`
   1. or with a search profile: `.../conceptschemes?level=1&searchProfile=<id>`
 - [X] list concepts in a concept scheme
-  1. ```.../concepts?conceptScheme=<id or URI>&props=prefLabel```
+  1. `.../concepts?conceptScheme=<id or URI>&props=prefLabel`
 - [X] show a selected concept and its relations
-  1. info about the concept: ```.../concept/<id>?level=2```
-  2. relations from the concept: ```.../relations?subject=<id>&types=semanticRelation&props=prefLabel```
-  3. relations to the concept: ```.../relations?object=<id>&types=semanticRelation&props=prefLabel```
-  4. user specific relations to the concept: ```.../relations?object=<id>&types=mi:fasterThan&props=prefLabel```
+  1. info about the concept: `.../concept/<id>?level=2`
+  2. relations from the concept: `.../relations?subject=<id>&types=semanticRelation&props=prefLabel`
+  3. relations to the concept: `.../relations?object=<id>&types=semanticRelation&props=prefLabel`
+  4. user specific relations to the concept: `.../relations?object=<id>&types=mi:fasterThan&props=prefLabel`
 - [X] search for a concept
-  1. ```.../concepts?text=<search terms>&props=prefLabel```
-  1. or with a search profile: ```.../concepts?text=<search terms>&props=prefLabel&searchProfile=<id>```
+  1. `.../concepts?text=<search terms>&props=prefLabel`
+  1. or with a search profile: `.../concepts?text=<search terms>&props=prefLabel&searchProfile=<id>`
 - [X] list of search profiles
   1. `.../searchprofiles`
 - [x] info of a search profile
@@ -104,7 +106,7 @@
   3. list of sets: `.../sets?level=1`
   4. list of institutions: `.../institutions?level=1`
 - [X] get the info on the institution
-  1. `.../institution/<id>?level-1` (NOTE: id is known from the user profile) (TODO: check if a higher level is needed due to VCard)
+  1. `.../institution/<id>?level=1` (NOTE: id is known from the user profile) (TODO: check if a higher level is needed due to VCard)
 - [X] get the list of sets
   1. `.../sets?institutions=<id>&level=1`
 - [X] get the info on a set
@@ -167,7 +169,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<limit params>`
 * limit=`nr of sets to return`
-* offset=`offset of last seen set` (NOTE: starts a 0)
+* offset=`offset of last seen set` (NOTE: starts at 0)
 
 ## concept schemes
 
@@ -188,7 +190,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<filter params>`
 * institutions=`comma separated list of institution URIs or IDs`
-* sets=`set`
+* sets=`comma separated list of set URIs or IDs`
 * searchProfile=`id of a search profile`
 
 `<limit params>`
@@ -339,14 +341,14 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
   * notation(:(asc|desc))? (default direction: asc)
   * uri(:(asc|desc))? (??) (default direction: asc)
   * score(:(asc|desc))? (default) (default direction: desc)
-* institution
-* set
-* conceptScheme
-* collection
-* dateSubmitted
-* modified
-* dateAccepted
-* openskos:deleted
+  * institution(:(asc|desc))? (default direction: asc)
+  * set(:(asc|desc))? (default direction: asc)
+  * conceptScheme(:(asc|desc))? (default direction: asc)
+  * collection(:(asc|desc))? (default direction: asc)
+  * dateSubmitted(:(asc|desc))? (default direction: asc)
+  * modified(:(asc|desc))? (default direction: asc)
+  * dateAccepted(:(asc|desc))? (default direction: asc)
+  * openskos:deleted(:(asc|desc))? (default direction: asc)
 
 `<limit params>`
 * limit=`nr of concepts to return`
@@ -378,7 +380,7 @@ NOTE: the OpenSKOS editor should never use level `3` or `4`, they're more intere
 
 `<filter params>`
 * institutions=`comma separated list of institution URIs or IDs`
-* sets=``comma separated list of set URIs or IDs``
+* sets=`comma separated list of set URIs or IDs`
 * conceptSchemes=`comma separated list of concept scheme URIs or IDs`
 * collections=`comma separated list of collection URIs or IDs`
 * searchProfile=`id of a search profile`

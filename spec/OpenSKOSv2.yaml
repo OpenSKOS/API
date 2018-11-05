@@ -1,0 +1,1371 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://example.com/rest'
+info:
+  description: RESTful interface to OpenSKOS
+  version: 2.0.0-SNAPSHOT
+  title: OpenSKOS
+  termsOfService: ''
+  contact:
+    email: menzo.windhouwer@di.huc.knaw.nl
+    name: Menzo Windhouwer
+tags: []
+paths:
+  /institutions:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the institution (default)
+            2: + object properties of the institution
+            3: + data properties of the set
+            4: + object properties of the set
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: nr of institutions to return
+          default: '100'
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: offset of last seen institution
+          default: '0'
+      operationId: 'getInstitutions'
+      responses:
+        default:
+          description: 'default response'
+  '/institution/{id}':
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: local identifier of the institution
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the institution (default)
+            2: + object properties of the institution
+            3: + data properties of the set
+            4: + object properties of the set
+      operationId: 'getInstitutionByID'
+      responses:
+        default:
+          description: 'default response'
+  /institution:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: 'anyURI'
+          description: 'global, possibly foreign, uri of the institution'
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the institution (default)
+            2: + object properties of the institution
+            3: + data properties of the set
+            4: + object properties of the set
+      operationId: 'getInstitutionByURI'
+      responses:
+        default:
+          description: 'default response'
+  /sets:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the set (default)
+            2: + object properties of the set
+            3: + data properties of the concept scheme or collection
+            4: + object properties of the concept scheme or collection
+        - name: institutions
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of institution URIs or IDs
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: nr of sets to return
+          default: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: offset of last seen set
+          default: '0'
+      operationId: 'getSets'
+      responses:
+        default:
+          description: Default response
+  '/set/{id}':
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: local identifier of the set
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the set (default)
+            2: + object properties of the set
+            3: + data properties of the concept scheme or collection
+            4: + object properties of the concept scheme or collection
+      operationId: 'getSetByID'
+      responses:
+        default:
+          description: 'default response'
+  /set:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: 'anyURI'
+          description: 'global, possibly foreign, uri of the set'
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the set (default)
+            2: + object properties of the set
+            3: + data properties of the concept scheme or collection
+            4: + object properties of the concept scheme or collection
+      operationId: 'getSetByURI'
+      responses:
+        default:
+          description: 'default response'
+  /conceptschemes:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the concept scheme (default)
+            2: + object properties of the concept scheme
+            3: + data properties of the concept
+            4: + object properties of the concept
+        - name: institutions
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of institution URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: searchProfile
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ID of a search profile
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: nr of concept schemes to return
+          default: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: offset of last seen concept scheme
+          default: '0'
+      operationId: 'getConceptSchemes'
+      responses:
+        default:
+          description: Default response
+  '/conceptscheme/{id}':
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: local identifier of the concept scheme
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the concept scheme (default)
+            2: + object properties of the concept scheme
+            3: + data properties of the concept
+            4: + object properties of the concept
+      operationId: 'getConceptSchemeByID'
+      responses:
+        default:
+          description: 'default response'
+  /conceptscheme:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: 'anyURI'
+          description: 'global, possibly foreign, uri of the concept scheme'
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the concept scheme (default)
+            2: + object properties of the concept scheme
+            3: + data properties of the concept
+            4: + object properties of the concept
+      operationId: 'getConceptSchemeByURI'
+      responses:
+        default:
+          description: 'default response'
+  /collections:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the collection (default)
+            2: + object properties of the collection
+            3: + data properties of the concept
+            4: + object properties of the concept
+        - name: institutions
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of institution URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: searchProfile
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ID of a search profile
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: nr of collections to return
+          default: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: offset of last seen collection
+          default: '0'
+      operationId: 'getCollections'
+      responses:
+        default:
+          description: Default response
+  '/collection/{id}':
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: local identifier of the collection
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the collection (default)
+            2: + object properties of the collection
+            3: + data properties of the concept
+            4: + object properties of the concept
+      operationId: 'getCollectionByID'
+      responses:
+        default:
+          description: 'default response'
+  /collection:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: 'anyURI'
+          description: 'global, possibly foreign, uri of the collection'
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          description: |-
+            1: data properties of the collection (default)
+            2: + object properties of the collection
+            3: + data properties of the concept
+            4: + object properties of the concept
+      operationId: 'getCollectionByURI'
+      responses:
+        default:
+          description: 'default response'
+  /concepts:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - label(@{lang})?
+              - prefLabel(@{lang})?
+              - altLabel(@{lang})?
+              - hiddenLabel(@{lang})?
+            - note(@{lang})?
+              - definition(@{lang})?
+              - example(@{lang})?
+              - changeNote(@{lang})?
+              - historyNote(@{lang})?
+              - scopeNote(@{lang})?
+              - editorialNote(@{lang})?
+            - notation
+          default: 'label'
+        - name: institutions
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of institution URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: conceptSchemes
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of concept scheme URIs or IDs
+        - name: collections
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of collection URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: searchProfile
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ID of a search profile
+        - name: dateSubmitted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: modified
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: dateAccepted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: openskos:deleted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: statuses
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - candidate
+            - approved
+            - redirected
+            - not_compliant
+            - rejected
+            - obsolete
+            - deleted
+        - name: creator
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:modifiedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:acceptedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:deletedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+          description: |-
+            1: data properties of the concepts (default)
+            2: + object properties of the concepts
+        - name: props
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - all
+            - uri
+            - label(@{lang})?
+              - prefLabel(@{lang})?
+              - altLabel(@{lang})?
+              - hiddenLabel(@{lang})?
+            - note(@{lang})?
+              - definition(@{lang})?
+              - example(@{lang})?
+              - changeNote(@{lang})?
+              - historyNote(@{lang})?
+              - scopeNote(@{lang})?
+              - editorialNote(@{lang})?
+            - notation
+            - semanticRelation
+              - broader
+              - narrower
+              - related
+              - broaderTransitive
+              - narrowerTransitive
+              - mappingRelation
+                - closeMatch
+                - exactMatch
+                - broadMatch
+                - narrowMatch
+                - relatedMatch
+            - inScheme
+              - topConceptOf
+            - openskos:inCollection
+            - openskos:status
+            - openskos:set
+            - openskos:institution
+            - dates
+              - dateSubmitted
+              - modified
+              - dateAccepted
+              - openskos:deleted
+            - users
+              - creator
+              - openskos:modifiedBy
+              - openskos:acceptedBy
+              - openskos:deletedBy
+            - URI of user-defined properties 
+            - URI of user-defined relation types
+          default: 'uri,prefLabel,definition'
+        - name: lang
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of known language codes (BCP 47)
+        - name: skosxl
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - prefLabel(@{lang})?(:(asc|desc))?
+            - altLabel(@{lang})?(:(asc|desc))?
+            - hiddenLabel(@{lang})?(:(asc|desc))?
+            - notation(:(asc|desc))?
+            - uri(:(asc|desc))?
+            - score(:(asc|desc))?
+            - institution(:(asc|desc))?
+            - set(:(asc|desc))?
+            - conceptScheme(:(asc|desc))?
+            - collection(:(asc|desc))?
+            - dateSubmitted(:(asc|desc))?
+            - modified(:(asc|desc))?
+            - dateAccepted(:(asc|desc))?
+            - openskos:deletec(:(asc|desc))?
+          default: score:desc
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: nr of concepts to return
+          default: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: offset of last seen concept
+          default: '0'
+      operationId: 'getConcepts'
+      responses:
+        default:
+          description: Default response
+  /concept/{id}:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: local identifier of the concept
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+          description: |-
+            1: data properties of the concepts (default)
+            2: + object properties of the concepts
+        - name: props
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - all
+            - uri
+            - label(@{lang})?
+              - prefLabel(@{lang})?
+              - altLabel(@{lang})?
+              - hiddenLabel(@{lang})?
+            - note(@{lang})?
+              - definition(@{lang})?
+              - example(@{lang})?
+              - changeNote(@{lang})?
+              - historyNote(@{lang})?
+              - scopeNote(@{lang})?
+              - editorialNote(@{lang})?
+            - notation
+            - semanticRelation
+              - broader
+              - narrower
+              - related
+              - broaderTransitive
+              - narrowerTransitive
+              - mappingRelation
+                - closeMatch
+                - exactMatch
+                - broadMatch
+                - narrowMatch
+                - relatedMatch
+            - inScheme
+              - topConceptOf
+            - openskos:inCollection
+            - openskos:status
+            - openskos:set
+            - openskos:institution
+            - dates
+              - dateSubmitted
+              - modified
+              - dateAccepted
+              - openskos:deleted
+            - users
+              - creator
+              - openskos:modifiedBy
+              - openskos:acceptedBy
+              - openskos:deletedBy
+            - URI of user-defined properties 
+            - URI of user-defined relation types
+          default: 'uri,prefLabel,definition'
+      operationId: 'getConceptByID'
+      responses:
+        default:
+          description: Default response
+  /concept:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: 'anyURI'
+          description: 'global, possibly foreign, uri of the concept'
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+          default: '1'
+          enum:
+            - '1'
+            - '2'
+          description: |-
+            1: data properties of the concepts (default)
+            2: + object properties of the concepts
+        - name: props
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - all
+            - uri
+            - label(@{lang})?
+              - prefLabel(@{lang})?
+              - altLabel(@{lang})?
+              - hiddenLabel(@{lang})?
+            - note(@{lang})?
+              - definition(@{lang})?
+              - example(@{lang})?
+              - changeNote(@{lang})?
+              - historyNote(@{lang})?
+              - scopeNote(@{lang})?
+              - editorialNote(@{lang})?
+            - notation
+            - semanticRelation
+              - broader
+              - narrower
+              - related
+              - broaderTransitive
+              - narrowerTransitive
+              - mappingRelation
+                - closeMatch
+                - exactMatch
+                - broadMatch
+                - narrowMatch
+                - relatedMatch
+            - inScheme
+              - topConceptOf
+            - openskos:inCollection
+            - openskos:status
+            - openskos:set
+            - openskos:institution
+            - dates
+              - dateSubmitted
+              - modified
+              - dateAccepted
+              - openskos:deleted
+            - users
+              - creator
+              - openskos:modifiedBy
+              - openskos:acceptedBy
+              - openskos:deletedBy
+            - URI of user-defined properties 
+            - URI of user-defined relation types
+          default: 'uri,prefLabel,definition'
+      operationId: 'getConceptByURI'
+      responses:
+        default:
+          description: Default response
+  /concepts/autocomplete:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - label(@{lang})?
+              - prefLabel(@{lang})?
+              - altLabel(@{lang})?
+              - hiddenLabel(@{lang})?
+            - notation
+          default: 'label'
+        - name: institutions
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of institution URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: conceptSchemes
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of concept scheme URIs or IDs
+        - name: collections
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of collection URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: searchProfile
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ID of a search profile
+        - name: dateSubmitted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: modified
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: dateAccepted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: openskos:deleted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: statuses
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - candidate
+            - approved
+            - redirected
+            - not_compliant
+            - rejected
+            - obsolete
+            - deleted
+        - name: creator
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:modifiedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:acceptedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:deletedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: props
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - uri
+            - label(@{lang})?
+              - prefLabel(@{lang})?
+              - altLabel(@{lang})?
+              - hiddenLabel(@{lang})?
+            - notation
+          default: 'uri,prefLabel'
+        - name: lang
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of known language codes (BCP 47)
+        - name: skosxl
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: nr of concepts to return
+          default: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: offset of last seen concept
+          default: '0'
+      operationId: 'autocompleteConcepts'
+      responses:
+        default:
+          description: Default response
+  /labels/autocomplete:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - uri
+            - literalForm
+          default: 'uri,literalForm'
+        - name: institutions
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of institution URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: conceptSchemes
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of concept scheme URIs or IDs
+        - name: collections
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of collection URIs or IDs
+        - name: sets
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of set URIs or IDs
+        - name: searchProfile
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ID of a search profile
+        - name: dateSubmitted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: modified
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: dateAccepted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: openskos:deleted
+          in: query
+          required: false
+          schema:
+            type: string
+            format: duration # and some shortcuts
+        - name: statuses
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - candidate
+            - approved
+            - redirected
+            - not_compliant
+            - rejected
+            - obsolete
+            - deleted
+        - name: creator
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:modifiedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:acceptedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: openskos:deletedBy
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of user URIs or IDs
+        - name: props
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |-
+            comma separated list of 
+            - uri
+            - label(@{lang})?
+              - prefLabel(@{lang})?
+              - altLabel(@{lang})?
+              - hiddenLabel(@{lang})?
+            - notation
+          default: 'uri,prefLabel'
+        - name: lang
+          in: query
+          required: false
+          schema:
+            type: string
+          description: comma separated list of known language codes (BCP 47)
+        - name: skosxl
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: nr of concepts to return
+          default: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: offset of last seen concept
+          default: '0'
+      operationId: 'autocompleteLabels'
+      responses:
+        default:
+          description: Default response
+/labels:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getLabels'
+      responses:
+        default:
+          description: Default response
+/label/{id}:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getLabelByID'
+      responses:
+        default:
+          description: Default response
+/label:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getLabelByURI'
+      responses:
+        default:
+          description: Default response
+/relations:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getRelations'
+      responses:
+        default:
+          description: Default response
+/relationtypes:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getRelationTypes'
+      responses:
+        default:
+          description: Default response
+/relationtype/{id}:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getRelationTypeByID'
+      responses:
+        default:
+          description: Default response
+/relationtype:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getRelationTypeByURI'
+      responses:
+        default:
+          description: Default response
+/users:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getUsers'
+      responses:
+        default:
+          description: Default response
+/user/{id}:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getUserByID'
+      responses:
+        default:
+          description: Default response
+/user:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getCurrentUser'
+      responses:
+        default:
+          description: Default response
+/roles:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getRoles'
+      responses:
+        default:
+          description: Default response
+/searchprofiles:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getSearchProfiles'
+      responses:
+        default:
+          description: Default response
+/searchprofile/{id}:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getSearchProfile'
+      responses:
+        default:
+          description: Default response
+/statuses:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getStatuses'
+      responses:
+        default:
+          description: Default response
+/prefixes:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getPrefixes'
+      responses:
+        default:
+          description: Default response
+/ping:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'ping'
+      responses:
+        default:
+          description: Default response
+/vocab:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        # TODO
+      operationId: 'getOpenSKOSVocabulary'
+      responses:
+        default:
+          description: Default response
+components:
+  schemas: {}
+  requestBodies: null
+  securitySchemes:
+    OpenSKOS-Api-Key:
+      type: apiKey
+      name: X-OpenSKOS-Api-Key
+      in: header
+  links: {}
+  callbacks: {}
+security: []
